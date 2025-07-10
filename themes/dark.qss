@@ -1,0 +1,11 @@
+/* themes/dark.qss */
+QMainWindow {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+QTextEdit, QPlainTextEdit {
+    background-color: #2e2e2e;
+    color: #dddddd;
+    font-family: Consolas;
+}
