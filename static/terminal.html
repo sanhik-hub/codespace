@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Terminal</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.css" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: black;
+      height: 100%;
+    }
+    #terminal {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="terminal"></div>
+  <script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.js"></script>
+  <script>
+    const term = new Terminal({ cursorBlink: true });
+    term.open(document.getElementById('terminal'));
+
+    const shellType = new URLSearchParams(window.location.search).get("shell") || "bash";
+    const socket = new WebSocket(`ws://localhost:3000/?shell=${shellType}`);
+
+    socket.onopen = () => {
+      term.write(`Connected to ${shellType} shell\r\n`);
+    };
+
+    socket.onmessage = e => term.write(e.data);
+    socket.onerror = e => term.write("\r\n[WebSocket error]\r\n");
+    socket.onclose = () => term.write("\r\n[Connection closed]\r\n");
+
+    term.onData(data => {
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.send(data);
+      }
+    });
+  </script>
+</body>
+</html>
